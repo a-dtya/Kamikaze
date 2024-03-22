@@ -2,6 +2,7 @@ import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import dotenv from "dotenv";
+import { webhookget, webhookpost } from "./whatsapp-controllers/webhook.js";
 
 
 dotenv.config();
@@ -20,6 +21,9 @@ app.use(
 app.get("/", (req, res) => {
     res.send("Hello Boys!");
   });
+
+  app.post("/webhook", webhookpost);
+  app.get("/webhook", webhookget);
   
   app.listen(process.env.PORT, () => {
     console.log(`Example app listening at http://localhost:${process.env.PORT}`);
