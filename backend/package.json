@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/a-dtya/Kamikaze#readme",
   "dependencies": {
+    "@prisma/client": "^5.11.0",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
@@ -27,6 +28,7 @@
     "whatsappcloudapi_wrapper": "^1.0.13"
   },
   "devDependencies": {
-    "nodemon": "^3.1.0"
+    "nodemon": "^3.1.0",
+    "prisma": "^5.11.0"
   }
 }
