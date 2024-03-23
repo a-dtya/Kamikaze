@@ -18,4 +18,4 @@ const supabase = createClient(supabaseUrl, supabaseKey,options);
 //   .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'todos' }, handleInserts)
 //   .subscribe()
 
-export default supabase;
+export default supabase;

@@ -1,10 +1,23 @@
+"use client"
+
 import { useEffect, useState } from 'react';
 import supabase from '../supabaseconfig';
-
-
+import { app } from '../firbaseconfig';
+import { getAuth, signOut } from 'firebase/auth';
+import { useRouter } from 'next/navigation';
 export default function Dashboard() {
 
   const [userName, setUserName] = useState(null);
+const auth = getAuth(app)
+const router = useRouter()
+const handleLogout = async()=>{
+  try{
+    await signOut(auth)
+    router.push("/")
+  }catch(error:any){
+    console.log(error.message)
+  }
+}
 
   useEffect(() => {
     async function fetchUserData() {
@@ -29,6 +42,7 @@ export default function Dashboard() {
   }, []); // Only run this effect once when component mounts
 
   return (
+    <>
     <div>
       {userName ? (
         <p>User's name: {userName}</p>
@@ -36,5 +50,9 @@ export default function Dashboard() {
         <p>Loading user data...</p>
       )}
     </div>
+    <div>
+        <button onClick={handleLogout}>Sign Out</button>
+    </div>
+    </>
   );
 }

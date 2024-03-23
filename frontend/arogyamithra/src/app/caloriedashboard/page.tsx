@@ -8,8 +8,110 @@ import { Calendar } from "@/components/ui/calendar"
 import { Button } from "@/components/ui/button"
 import { Slide } from 'react-slideshow-image';
 import 'react-slideshow-image/dist/styles.css'
+import DailyCalorie from "../dailycalorie/page";
+import ProteinIntake from "../proteinintake/page";
+import { useEffect,useState } from "react";
+import supabase from "../supabaseconfig";
+
 export default function Mainbar() {
-    
+  const [totalProteins, setTotalProteins] = useState<any>(0);
+  const [totalCarbohydrates, setTotalCarbohydrates] = useState<any>(0);
+  const [totalCalories, setTotalCalories] = useState<any>(0);
+  const [totalFats, setTotalFats] = useState<any>(0);
+ 
+//const [userreal,setUserReal]=useState<string>("4699c5fa-8f19-45d0-8863-84306280991d")
+const userreal = "b97552f9-25c0-4431-8816-6921b5ac712c"
+useEffect(()=>{
+
+  async function fetchProteinEntries() {
+    try{
+      const phone = "917907119436"
+      const { data, error } = await supabase.from('User').select('*').eq('phone', phone).single();
+      console.log(data)
+      //setUserReal(data?.id)
+    }catch(error:any){
+        console.log(error.message)
+
+      }
+  
+      try{
+        // const currentDate = new Date().toISOString();
+        // console.log(currentDate)
+
+        // Fetch food entries for the user within the current day
+        // const { data, error } = await supabase
+        //   .from('FoodEntry')
+        //   .select('*')
+        //   .eq('userId', userreal)
+        //   .lte('entryDate', currentDate);
+        const todayStart = new Date();
+        todayStart.setUTCHours(0, 0, 0, 0);
+      
+        const todayEnd = new Date();
+        todayEnd.setUTCHours(23, 59, 59, 999);
+        let { data: foodEntries, error } = await supabase
+      .from('FoodEntry')
+      .select('*')
+      .eq('userId', userreal)
+      .gte('entryDate', todayStart.toISOString())
+      .lte('entryDate', todayEnd.toISOString());
+
+    if (error) throw error;
+
+    if (!foodEntries || foodEntries.length === 0) {
+      return "You haven't logged any food entries for today.";
+    }
+
+    let totalCaloriesv = 0;
+    let totalFatsv = 0;
+    let totalProteinv = 0;
+    let totalCarbohydratesv = 0;
+
+    foodEntries.forEach(entry => {
+      totalCaloriesv += entry.calories;
+      totalFatsv += entry.fats || 0;
+      totalProteinv += entry.protein || 0;
+      totalCarbohydratesv += entry.carbohydrates || 0;
+
+    });
+setTotalCalories(totalCaloriesv)
+setTotalFats(totalFatsv)
+setTotalCarbohydrates(totalCarbohydratesv)
+setTotalProteins(totalProteinv)
+
+
+      // const { data, error } = await supabase
+      // .from('FoodEntry')
+      // .select('protein')
+      // .eq('userId', userreal).gte('entryDate',realtoday).lte('entryDate',realtomorrow)
+      //   console.log(data)
+      //   if (error) {
+      //     throw error;
+      //   }
+
+      //   if (data) {
+        
+
+      //     // Calculate total
+      //     let totalProteinsvalue=0
+      //     console.log(data)
+      //     data.forEach(entry => {
+      //       if(entry.protein)
+      //       totalProteinsvalue+=entry.protein
+      //     });
+      //     console.log(totalProteinsvalue)
+
+      //     setTotalProteins(totalProteinsvalue);
+         
+         
+        }
+       catch (error:any) {
+        console.error('Error fetching food entries:', error.message);
+      }
+  }
+  fetchProteinEntries()
+  
+},[userreal])  
 const images = [
     { url: "https://media.istockphoto.com/id/670591110/photo/business-people-in-the-office.jpg?s=2048x2048&w=is&k=20&c=mexbWsuclJr_0hyghl3ZAshioWUP6ALzN58OYkvam0g=", caption:'calorie tracking' },
     { url: "https://media.istockphoto.com/id/1239748643/photo/happy-real-estate-agent-and-young-couple-making-plans-at-new-apartment.jpg?s=2048x2048&w=is&k=20&c=48ZKIJ9PEv208adZgJuNFApn2GahS9S7EpFl-3WviOw=",caption:'fitness' },
@@ -70,22 +172,22 @@ const images = [
               <div className="flex justify-between items-center mb-4">
                 <div>
                   <p className="text-sm">Carbs</p>
-                  <p className="text-sm font-bold">70g/277g</p>
+                  <p className="text-sm font-bold">{totalCarbohydrates}g </p>
                 </div>
                 <div>
                   <p className="text-sm">Protein</p>
-                  <p className="text-sm font-bold">15g/111g</p>
+                  <p className="text-sm font-bold">{totalProteins}g</p>
                 </div>
                 <div>
                   <p className="text-sm">Fat</p>
-                  <p className="text-sm font-bold">54g/74g</p>
+                  <p className="text-sm font-bold">{totalFats}g</p>
                 </div>
               </div>
               <div className="text-center relative">
                 <div className="h-4 bg-gray-200 rounded-full overflow-hidden">
                   <div className="h-full bg-blue-500 w-3/4" />
                 </div>
-                <p className="text-xs text-gray-500 dark:text-gray-400">Kcal left: 1350</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">{totalCalories}Kcal</p>
               </div>
             </div>
             <div className="bg-white rounded-lg p-4 shadow">
@@ -96,8 +198,8 @@ const images = [
                   <p className="text-sm font-bold">96 kcal</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-4xl font-bold">16%</p>
-                  <p className="text-sm">Goal 600 kcal</p>
+                  <p className="text-4xl font-bold">{totalCalories/1000 * 100}%</p>
+                  <p className="text-sm"><DailyCalorie/>Kcal</p>
                 </div>
               </div>
             </div>
