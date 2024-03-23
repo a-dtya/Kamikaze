@@ -2,6 +2,7 @@
 "use client"
 import { useEffect, useState } from 'react';
 import supabase from '../supabaseconfig';
+import Tips from '../tips/page';
 
 // Define the type for health plan
 interface HealthPlan {
@@ -56,9 +57,10 @@ export default function UserHealthPlan() {
   // Render health plan details
   return (
     <div>
-      <h2 className='border rounded-md mx-2 my-2 text-center bg-blue-300 font-bold'>Health Plan Details</h2>
+      <h2 className='border rounded-md mx-2 my-2 text-center pt-3 bg-green-300 font-bold h-[50px]'>Health Plan Details</h2>
       {healthPlan ? (
-       <div className="bg-blue-300 shadow-md rounded-md p-4 mx-2">
+        <>
+       <div className="bg-green-300 shadow-md rounded-md p-4 mx-2">
        <h2 className="text-lg font-semibold mb-4">Health Plan </h2>
        <div className="grid gap-4">
          <div className="grid grid-cols-2 gap-4">
@@ -87,6 +89,11 @@ export default function UserHealthPlan() {
          </div>
        </div>
      </div>
+     <div className="bg-green-200 shadow-md rounded-md p-4 mx-2 mt-2">
+    <Tips/>
+    </div>
+    </>
+
      
       ) : (
         <div>No health plan found for the user.</div>

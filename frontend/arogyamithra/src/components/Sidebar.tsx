@@ -55,13 +55,13 @@ export default function Sidebar() {
 
   return(
     
-<div className="fixed flex flex-col gap-4 w-[300px] min-w-[300px] border-r min-h-screen p-4">
+<div className="fixed flex flex-col gap-4 w-[300px] min-w-[300px] border-r min-h-screen p-4 bg-red-200 my-2 mx-1 rounded-md">
       <div>
         <UserItem />
       </div>
       <div className="grow">
         <Command style={{ overflow: 'visible' }}>
-          <CommandList style={{ overflow: 'visible' }}>
+          <CommandList style={{ overflow: 'visible' }} className='bg-gray-200 rounded-md'>
             {menuList.map((menu, key) => (
               <CommandGroup key={key} heading={menu.group}>
                 {menu.items.map((option, optionKey) => (

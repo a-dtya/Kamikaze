@@ -135,7 +135,7 @@ const images = [
     height: '400px'
   }
   return (
-    <div className="min-h-screen bg-[#e5f1ff] p-8">
+    <div className="min-h-screen bg-green-200 p-8 my-2 mx-2 rounded-md">
       <header className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Dashboard</h1>
         <div className="flex items-center">
@@ -145,10 +145,10 @@ const images = [
       </header>
       <main>
       <section className="mb-8">
-          <div className="bg-white rounded-lg p-4 shadow">
-            <h2 className="text-lg font-semibold mb-2">Hero Section</h2>
+          <div className="bg-white rounded-lg p-4 shadow bg-red-200">
+            <h2 className="text-lg font-semibold mb-2">Good day Sreehari!</h2>
             <div className="grid grid-cols-2">
-              <div className=" rounded-lg p-4 shadow mr-3 bg-blue-200">
+              <div className=" rounded-lg p-4 shadow mr-3 bg-green-100">
                 <Calendar />
               </div>
               <div className="bg-white rounded-lg p-4 shadow ">
@@ -167,7 +167,7 @@ const images = [
         </section>
         <section className="mb-8">
           <div className="grid grid-cols-2 gap-4">
-            <div className="bg-white rounded-lg p-4 shadow">
+            <div className="bg-red-200 rounded-lg p-4 shadow">
               <h2 className="text-lg font-semibold mb-2">Nutrition</h2>
               <div className="flex justify-between items-center mb-4">
                 <div>
@@ -185,12 +185,12 @@ const images = [
               </div>
               <div className="text-center relative">
                 <div className="h-4 bg-gray-200 rounded-full overflow-hidden">
-                  <div className="h-full bg-blue-500 w-3/4" />
+                  <div className="h-full bg-green-600 w-3/4" />
                 </div>
                 <p className="text-xs text-gray-500 dark:text-gray-400">{totalCalories}Kcal</p>
               </div>
             </div>
-            <div className="bg-white rounded-lg p-4 shadow">
+            <div className="bg-red-200 rounded-lg p-4 shadow">
               <h2 className="text-lg font-semibold mb-2">Activities</h2>
               <div className="flex justify-between items-center mb-4">
                 <div>
@@ -209,20 +209,20 @@ const images = [
           <div className="bg-white rounded-lg p-4 shadow mb-4">
             <h2 className="text-lg font-semibold mb-2">Everyday Dining</h2>
             <div className="grid grid-cols-2 gap-4">
-              <div className="text-center rounded-full bg-gray-200 p-4">
+              <div className="text-center rounded-full bg-red-200 p-4">
                 <p className="text-sm">Breakfast</p>
                 <p className="text-sm">Bread, Peanut Butter, Hard Boiled Egg, Oatmeal</p>
                 <p className="text-lg font-bold">433 kcal</p>
               </div>
-              <div className="text-center rounded-full bg-gray-200 p-4">
+              <div className="text-center rounded-full bg-red-200 p-4">
                 <p className="text-sm">Snack</p>
                 <p className="text-sm">Recommended: 57-77 kcal</p>
               </div>
-              <div className="text-center rounded-full bg-gray-200 p-4">
+              <div className="text-center rounded-full bg-red-200 p-4">
                 <p className="text-sm">Lunch</p>
                 <p className="text-sm">Recommended: 57-77 kcal</p>
               </div>
-              <div className="text-center rounded-full bg-gray-200 p-4">
+              <div className="text-center rounded-full bg-red-200 p-4">
                 <p className="text-sm">Dinner</p>
                 <p className="text-sm">Recommended: 57-77 kcal</p>
               </div>
@@ -231,22 +231,22 @@ const images = [
           <div className="bg-white rounded-lg p-4 shadow">
             <h2 className="text-lg font-semibold mb-2">Workouts</h2>
             <div className="grid grid-cols-2 gap-4">
-              <div className="text-center rounded-full bg-gray-200 p-4">
+              <div className="text-center rounded-full bg-red-200 p-4">
                 <p className="text-sm">Walking the dog</p>
                 <p className="text-sm">08:00 am</p>
                 <p className="text-lg font-bold">0:15</p>
               </div>
-              <div className="text-center rounded-full bg-gray-200 p-4">
+              <div className="text-center rounded-full bg-red-200 p-4">
                 <p className="text-sm">Outdoor Cycle</p>
                 <p className="text-sm">09:00 am</p>
                 <p className="text-lg font-bold">1:45</p>
               </div>
-              <div className="text-center rounded-full bg-gray-200 p-4">
+              <div className="text-center rounded-full bg-red-200 p-4">
                 <p className="text-sm">Running</p>
                 <p className="text-sm">05:00 pm</p>
                 <p className="text-lg font-bold">0:45</p>
               </div>
-              <div className="text-center rounded-full bg-gray-200 p-4">
+              <div className="text-center rounded-full bg-red-200 p-4">
                 <p className="text-sm">Yoga</p>
                 <p className="text-sm">08:00 pm</p>
                 <p className="text-lg font-bold">1:45</p>
