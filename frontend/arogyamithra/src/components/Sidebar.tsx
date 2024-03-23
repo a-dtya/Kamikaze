@@ -1,6 +1,6 @@
 'use client';
-
-import { BellIcon, Cookie, CreditCard, Inbox, MessageSquare, Settings, User } from "lucide-react";
+import Link from 'next/link';
+import { BellIcon, Cookie, CreditCard, HeartPulse, Inbox, MessageSquare, Settings, Users, Smile, Pizza, Dumbbell, Ribbon } from "lucide-react";
 import UserItem from "./ui/useritem";
 import { Command, CommandGroup, CommandItem, CommandList } from "./ui/command";
 
@@ -10,24 +10,24 @@ export default function Sidebar() {
       group: "General",
       items: [
         {
-          link: "/",
-          icon: <User />,
+          link: "/caloriedashboard",
+          icon: <Smile/>,
           text: "Profile"
         },
         {
-          link: "/",
-          icon: <Inbox />,
-          text: "Inbox"
+          link: "/medical",
+          icon: <HeartPulse/>,
+          text: "Medical Report"
         },
         {
-          link: "/",
-          icon: <CreditCard />,
-          text: "Billing"
+          link: "/calorie",
+          icon: <Pizza />,
+          text: "Calorie Tracking"
         },
         {
-          link: "/",
-          icon: <BellIcon />,
-          text: "Notifications"
+          link: "/fitness",
+          icon: <Dumbbell />,
+          text: "Fitness"
         }
       ]
     },
@@ -35,45 +35,49 @@ export default function Sidebar() {
       group: "Settings",
       items: [
         {
-          link: "/",
-          icon: <Settings />,
-          text: "General Settings"
+          link: "/mental",
+          icon: <Ribbon />,
+          text: "Mental Health"
         },
         {
-          link: "/",
-          icon: <Cookie />,
-          text: "Privacy"
+          link: "/community",
+          icon: <Users />,
+          text: "Community"
         },
         {
-          link: "/",
-          icon: <MessageSquare />,
-          text: "Logs"
+          link: "/about",
+          icon: <Settings/>,
+          text: "About"
         }
       ]
     }
   ]
 
-  return <div className="fixed flex flex-col gap-4 w-[300px] min-w-[300px] border-r min-h-screen p-4">
-    <div>
-      <UserItem />
+  return(
+    
+<div className="fixed flex flex-col gap-4 w-[300px] min-w-[300px] border-r min-h-screen p-4">
+      <div>
+        <UserItem />
+      </div>
+      <div className="grow">
+        <Command style={{ overflow: 'visible' }}>
+          <CommandList style={{ overflow: 'visible' }}>
+            {menuList.map((menu, key) => (
+              <CommandGroup key={key} heading={menu.group}>
+                {menu.items.map((option, optionKey) => (
+                  <Link href={option.link} key={optionKey}>
+                    <div className="flex gap-2 cursor-pointer">
+                      {option.icon}
+                      {option.text}
+                    </div>
+                  </Link>
+                ))}
+              </CommandGroup>
+            ))}
+          </CommandList>
+        </Command>
+      </div>
+      <div>Settings / Notifications</div>
     </div>
-    <div className="grow">
-      <Command style={{ overflow: 'visible' }}>
-        <CommandList style={{ overflow: 'visible' }}>
-          {menuList.map((menu: any, key: number) => (
-            <CommandGroup key={key} heading={menu.group}>
-              {menu.items.map((option: any, optionKey: number) =>
-                <CommandItem key={optionKey} className="flex gap-2 cursor-pointer">
-                  {option.icon}
-                  {option.text}
-                </CommandItem>
-              )}
-            </CommandGroup>
-          ))}
-        </CommandList>
-      </Command>
-
-    </div>
-    <div>Settings / Notifications</div>
-  </div>;
+  );
 }

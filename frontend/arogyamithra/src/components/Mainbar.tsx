@@ -3,35 +3,10 @@
  * @see https://v0.dev/t/viKAXuxMZtz
  * Documentation: https://v0.dev/docs#integrating-generated-code-into-your-nextjs-app
  */
-"use client"
 import { Calendar } from "@/components/ui/calendar"
 import { Button } from "@/components/ui/button"
-import { Slide } from 'react-slideshow-image';
-import 'react-slideshow-image/dist/styles.css'
+
 export default function Mainbar() {
-    
-const images = [
-    { url: "https://media.istockphoto.com/id/670591110/photo/business-people-in-the-office.jpg?s=2048x2048&w=is&k=20&c=mexbWsuclJr_0hyghl3ZAshioWUP6ALzN58OYkvam0g=", caption:'calorie tracking' },
-    { url: "https://media.istockphoto.com/id/1239748643/photo/happy-real-estate-agent-and-young-couple-making-plans-at-new-apartment.jpg?s=2048x2048&w=is&k=20&c=48ZKIJ9PEv208adZgJuNFApn2GahS9S7EpFl-3WviOw=",caption:'fitness' },
-    { url: "https://media.istockphoto.com/id/831619688/photo/business-people-standing-in-business-building-business-woman-showing-something-to-her-colleague.jpg?s=2048x2048&w=is&k=20&c=4mJJ5RaIRc0qBn9k_u0kt70mFIB2JoE8isyt_0Wj7WI=",caption:'health' },
-  ];
-  const spanStyle = {
-    marginTop: '20rem',
-    width:"100%",
-    textAlign:"center",
-    padding: '20px',
-    backgroundColor: 'rgba(239, 239, 239, 0.003)', // Adjust the opacity (last value) as needed
-    color: '#000000',
-    backdropFilter: 'blur(50px)'
-  }
-  
-  const divStyle = {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundSize: 'cover',
-    height: '400px'
-  }
   return (
     <div className="min-h-screen bg-[#e5f1ff] p-8">
       <header className="flex justify-between items-center mb-6">
@@ -42,27 +17,6 @@ const images = [
         </div>
       </header>
       <main>
-      <section className="mb-8">
-          <div className="bg-white rounded-lg p-4 shadow">
-            <h2 className="text-lg font-semibold mb-2">Hero Section</h2>
-            <div className="grid grid-cols-2">
-              <div className=" rounded-lg p-4 shadow mr-3 bg-blue-200">
-                <Calendar />
-              </div>
-              <div className="bg-white rounded-lg p-4 shadow ">
-              <Slide>
-         {images.map((slideImage, index)=> (
-            <div key={index}>
-              <div style={{ ...divStyle, 'backgroundImage': `url(${slideImage.url})` }}>
-                <span style={spanStyle}>{slideImage.caption}</span>
-              </div>
-            </div>
-          ))} 
-        </Slide>
-                </div>
-              </div>
-            </div>
-        </section>
         <section className="mb-8">
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-white rounded-lg p-4 shadow">
@@ -152,7 +106,32 @@ const images = [
             </div>
           </div>
         </section>
-       
+        <section className="mb-8">
+          <div className="bg-white rounded-lg p-4 shadow">
+            <h2 className="text-lg font-semibold mb-2">Hero Section</h2>
+            <div className="grid grid-cols-2">
+              <div className="bg-white rounded-lg p-4 shadow">
+                <Calendar />
+              </div>
+              <div className="bg-white rounded-lg p-4 shadow">
+                <div className="slider">
+                  <div className="slide">
+                    <img alt="Image 1" src="/placeholder.svg" />
+                    <div className="text-overlay">Text Overlay 1</div>
+                  </div>
+                  <div className="slide">
+                    <img alt="Image 2" src="/placeholder.svg" />
+                    <div className="text-overlay">Text Overlay 2</div>
+                  </div>
+                  <div className="slide">
+                    <img alt="Image 3" src="/placeholder.svg" />
+                    <div className="text-overlay">Text Overlay 3</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
         <section className="flex justify-between items-center">
           <Button className="bg-blue-500 text-white">Home</Button>
           <Button className="bg-transparent text-blue-500">Search</Button>
