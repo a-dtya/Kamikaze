@@ -2,10 +2,11 @@ import { db } from "./db.js";
 
 async function getTodayNutritionStatusMessage(userId) {
   const todayStart = new Date();
-  todayStart.setHours(0, 0, 0, 0);
-
+  todayStart.setUTCHours(0, 0, 0, 0);
+  console.log(todayStart);
   const todayEnd = new Date();
-  todayEnd.setHours(23, 59, 59, 999);
+  todayEnd.setUTCHours(23, 59, 59, 999);
+  console.log(todayEnd);
 
   try {
     const foodEntries = await db.foodEntry.findMany({

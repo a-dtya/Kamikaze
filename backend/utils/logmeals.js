@@ -22,8 +22,8 @@ async function logFoodEntryAndReportStatus(userId, foodItem,image_url) {
       console.log(nutrientMsg);
   
       // Step 3: Fetch today's total calorie intake and the user's daily calorie goal
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
+      const todayStart = new Date();
+      todayStart.setUTCHours(0, 0, 0, 0);
   
       const [totalCaloriesToday, dailyGoal] = await Promise.all([
         db.foodEntry.aggregate({
@@ -33,7 +33,7 @@ async function logFoodEntryAndReportStatus(userId, foodItem,image_url) {
           where: {
             userId: userId,
             entryDate: {
-              gte: today,
+              gte: todayStart,
             },
           },
         }),

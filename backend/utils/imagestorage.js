@@ -1,7 +1,11 @@
 import axios from 'axios';
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import fs from 'fs';
+// import pdfParse from 'pdf-parse';
+
 import 'dotenv/config';
 import { s3 } from '../config.js';
+// import PdfParse from 'pdf-parse';
 async function sendGetRequest(id) {
    const  newurl = "https://graph.facebook.com/v18.0/" + id;
     try {
@@ -23,8 +27,11 @@ async function sendGetRequest(id) {
             console.log(" Response from Graph V.18 - image: " + mediaURL);
             console.log(" Mime type: " + mediaMimeType);
 
-           const url =  await uploadMediaToS3(mediaURL, mediaMimeType,id);
-            return url;
+           const {imageUrl,key} =  await uploadMediaToS3(mediaURL, mediaMimeType,id);
+           console.log("imageUrl",imageUrl);
+           console.log("key",key);
+            return imageUrl;
+
 
 
         } else {
@@ -52,7 +59,9 @@ async function uploadMediaToS3(mediaURL, mediaMimeType, id) {
         'Content-Type': mediaMimeType,
       },
       responseType: 'arraybuffer',
+      ACL: "public-read"
     });
+    // fs.writeFileSync(`./downloads/${key}`, response.data);
 
     if (!response.data) {
       console.error('Empty response data received.');
@@ -74,15 +83,28 @@ async function uploadMediaToS3(mediaURL, mediaMimeType, id) {
     const imageUrl = `https://${process.env.PUBLIC_S3_BUCKET_NAME}.s3.amazonaws.com/${key}`;
     console.log(`Image URL: ${imageUrl}`);
 
-    return imageUrl;
+    return {imageUrl,key};
   } catch (error) {
     console.error('Error processing media:', error);
     return null;
   }
 }
 
+async function extractPdfContent(filePath) {
+    try {
+        const pdfBuffer = fs.readFileSync(filePath);
+
+        // const data = await PdfParse(pdfBuffer);
+        console.log('pdfBuffer',pdfBuffer);
+        return pdfBuffer; // or any other data you need from the PDF
+    } catch (error) {
+        console.error('Error in extractPdfContent:', error);
+        throw error;
+    }
+}
 
 
 
 
-export { sendGetRequest, uploadMediaToS3};
+
+export { sendGetRequest, uploadMediaToS3, extractPdfContent};

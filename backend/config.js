@@ -23,7 +23,6 @@ const openai = new OpenAI({
     apiKey: process.env.OPENAI_KEY
 });
 
-console.log("AWS S3 file loaded");
 
 const senderNumber = process.env.WA_PHONE_NUMBER_ID;
 const wa = new WhatsApp(senderNumber);

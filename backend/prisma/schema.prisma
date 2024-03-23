@@ -18,6 +18,10 @@ model User {
   phone           String            @unique
   dailyGoals    DailyGoal[]
   foodEntries   FoodEntry[]
+  bloodReports  BloodReport[]
+  dietPlans     DietPlan[]
+  healthTips    HealthTip[]
+  healthPlans   HealthPlan[]
   updatedAt     DateTime    @updatedAt
   createdAt     DateTime    @default(now())
 
@@ -27,7 +31,7 @@ model DailyGoal {
   id            String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   userId        String      @db.Uuid
   date          DateTime    @default(now())
-  calorieGoal   Int
+  calorieGoal   Int         @default(500)
   user          User        @relation(fields: [userId], references: [id])
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
@@ -47,4 +51,45 @@ model FoodEntry {
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
 }
+
+model BloodReport {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId      String    @db.Uuid
+  reportUrl   String    // URL to the blood report file
+  reportDate  DateTime  // The date the report was submitted
+  user        User      @relation(fields: [userId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+model DietPlan {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId      String    @db.Uuid
+  startDate   DateTime  // When the diet plan starts
+  endDate     DateTime  // When the diet plan ends
+  details     String    // Details of the diet plan, possibly stored as JSON or plain text
+  user        User      @relation(fields: [userId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+model HealthTip {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tip         String    
+  userId      String    @db.Uuid
+  user        User      @relation(fields: [userId], references: [id])
+  applicableDate DateTime 
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+model HealthPlan {
+  id                 String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId             String       @db.Uuid
+   user        User      @relation(fields: [userId], references: [id])
+  medicalAllergies   String?
+  currentMedications String?
+  height             String?
+  weight             String?
+  idealDietPlan      String?
+}
+
+
 

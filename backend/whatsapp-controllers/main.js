@@ -1,9 +1,11 @@
 import { wa, whatsapp1 } from "../config.js";
 import { db } from "../utils/db.js";
-import { sendGetRequest, uploadMediaToS3 } from "../utils/imagestorage.js";
+import { extractPdfContent, sendGetRequest, uploadMediaToS3 } from "../utils/imagestorage.js";
 import { logFoodEntryAndReportStatus } from "../utils/logmeals.js";
 import { getNurtitionalValue } from "../utils/nutrigpt.js";
 import { getTodayNutritionStatusMessage } from "../utils/nutristats.js";
+import { downloadPdfFromS3, extractTextFromPdfBuffer } from "../utils/report.js";
+
 import { remove_msg } from "./webhook.js";
 
 const mainflow = async (req, res) => {
@@ -14,6 +16,7 @@ const mainflow = async (req, res) => {
       let businessId = body.WABA_ID;
       let incomingMessage = body.message;
       let recipientPhone = incomingMessage.from.phone;
+      let username = incomingMessage.from.name;
       let typeOfMsg = incomingMessage.type;
       console.log("incomingMessage", incomingMessage);
 
@@ -41,7 +44,7 @@ const mainflow = async (req, res) => {
         });
       }
       console.log("user", user);
-        //uploading image
+      //uploading image
       if (
         typeOfMsg === "media_message" &&
         incomingMessage.image.mime_type === "image/jpeg"
@@ -51,19 +54,22 @@ const mainflow = async (req, res) => {
         //   preview_url: false,
         // };
         // await wa.messages.text(message, incomingMessage.from.phone);
-        const url = await sendGetRequest(incomingMessage.image.id);
 
         const message1 = {
-          body: `  Please wait for a moment, we are processing the image...`,
-          preview_url: false,
-        };
-        await wa.messages.text(message1, incomingMessage.from.phone);
-        const nutitionalvalue = await getNurtitionalValue(url);
+            body: `  Please wait for a moment, we are processing the image...`,
+            preview_url: false,
+          };
+          await wa.messages.text(message1, incomingMessage.from.phone);
+
+
+        const imageUrl = await sendGetRequest(incomingMessage.image.id);
+        console.log("imageUrl", imageUrl);
+        const nutitionalvalue = await getNurtitionalValue(imageUrl);
 
         const { nutrientMsg, statusMsg } = await logFoodEntryAndReportStatus(
           user.id,
           nutitionalvalue,
-          url
+          imageUrl
         );
 
         const message2 = {
@@ -77,8 +83,31 @@ const mainflow = async (req, res) => {
         };
         await wa.messages.text(message3, incomingMessage.from.phone);
         console.log("nutitionalvalue", nutitionalvalue.fooditem);
+        console.log("url", imageUrl);
+
+     
+
+
+        
 
         return "done";
+      }
+      if (incomingMessage.document?.mime_type === "application/pdf") {
+        const  imageUrl = await sendGetRequest(incomingMessage.document.id);
+        const message1 = {
+          body: ` Thank you for sending the document, we will process and give personalized recommendations based on the report and daily tips to improve your health.`,
+          preview_url: false,
+        };
+        await wa.messages.text(message1, incomingMessage.from.phone);
+        // const pdfBuffer = await downloadPdfFromS3(process.env.PUBLIC_S3_BUCKET_NAME,key);
+        // console.log("pdfBuffer", pdfBuffer);
+//          const response = await extractPdfContent(`./downloads/${key}`)
+// console.log("response",response);
+        // const bloodreportdata = await extractPdfText(url);
+        //  const data = await extractDataFromPdf(pdfBuffer);
+        // const response = extractTextFromPdfData(pdfBuffer);
+        // const response = await extractTextFromPdfBuffer(pdfBuffer);
+        // console.log("data", response);
       }
       //setting calorie goal
       if (
@@ -97,13 +126,13 @@ const mainflow = async (req, res) => {
           },
         });
         const message = {
-            body: `Daily calorie goal set to ${calorieGoal}`,
-            preview_url: false,
+          body: `Daily calorie goal set to ${calorieGoal}`,
+          preview_url: false,
         };
         await wa.messages.text(message, incomingMessage.from.phone);
         return "done";
       }
-//set daily calorie goal options
+      //set daily calorie goal options
       if (
         typeOfMsg === "radio_button_message" &&
         incomingMessage.interactive.type === "list_reply" &&
@@ -154,7 +183,21 @@ const mainflow = async (req, res) => {
         );
         return "done";
       }
-//nutrition status
+      if (
+        typeOfMsg === "radio_button_message" &&
+        incomingMessage.interactive.type === "list_reply" &&
+        incomingMessage.interactive.list_reply.id.includes("Blood_report")
+      ) {
+        const message = {
+          body: `Please send the document of the blood report`,
+          preview_url: false,
+        };
+
+        await wa.messages.text(message, recipientPhone);
+
+        return "done";
+      }
+      //nutrition status
       if (
         typeOfMsg === "radio_button_message" &&
         incomingMessage.interactive.type === "list_reply" &&
@@ -188,8 +231,12 @@ const mainflow = async (req, res) => {
 
         return "done";
       }
+    //   if (incomingMessage.text && incomingMessage.text.hasOwnProperty("body") && incomingMessage.text.body === "Hi") {
+        
+    //     return "done";
+    //   }
 
-      if (incomingMessage.text && incomingMessage.text.hasOwnProperty("body")) {
+      if (incomingMessage.text && incomingMessage.text.hasOwnProperty("body") && incomingMessage.text.body === "Hi") {
         const list_message = {
           type: "list",
 
