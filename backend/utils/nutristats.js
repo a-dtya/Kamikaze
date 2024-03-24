@@ -20,7 +20,7 @@ async function getTodayNutritionStatusMessage(userId) {
     });
 
     if (foodEntries.length === 0) {
-      return "You haven't logged any food entries for today.";
+      return "It looks like you haven't logged any food entries for today. 🗒️ Let's get started on tracking your meals! 🥗";
     }
 
     let totalCalories = 0;
@@ -35,11 +35,12 @@ async function getTodayNutritionStatusMessage(userId) {
       totalCarbohydrates += entry.carbohydrates || 0;
     });
 
-    let message = `Today's Nutrition Summary:\n`;
-    message += `Calories: ${totalCalories}\n`;
-    message += `Fats: ${totalFats.toFixed(2)}g\n`;
-    message += `Protein: ${totalProtein.toFixed(2)}g\n`;
-    message += `Carbohydrates: ${totalCarbohydrates.toFixed(2)}g`;
+    let message = "✨ Today's Nutrition Summary: ✨\n";
+    message += `🔥 Calories: ${totalCalories}\n`;
+    message += `🥑 Fats: ${totalFats.toFixed(2)}g\n`;
+    message += `🍖 Protein: ${totalProtein.toFixed(2)}g\n`;
+    message += `🍞 Carbohydrates: ${totalCarbohydrates.toFixed(2)}g`;
+    
 
     return message;
   } catch (error) {

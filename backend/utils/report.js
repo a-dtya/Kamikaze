@@ -1,7 +1,9 @@
 import { openai, s3 } from "../config.js";
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 dotenv.config();
-import axios from 'axios';
+import axios from "axios";
+import fetch from 'node-fetch';
+
 import { GetObjectCommand } from "@aws-sdk/client-s3";
 // import pdfParse from 'pdf-parse';
 
@@ -12,14 +14,16 @@ async function downloadPdfFromS3(bucketName, fileKey) {
   };
 
   try {
-    const uploadResult = await s3.send(new GetObjectCommand({
+    const uploadResult = await s3.send(
+      new GetObjectCommand({
         Bucket: process.env.PUBLIC_S3_BUCKET_NAME, // Your bucket name
         Key: fileKey,
-      }));
-      const uploadresult =  await uploadResult.Body.transformToString
-        console.log('uploadResult',uploadresult);
-      const uploadResultbyte =  await uploadResult.Body.transformToByteArray
-        console.log('uploadResultbyte',uploadResultbyte);
+      })
+    );
+    const uploadresult = await uploadResult.Body.transformToString;
+    console.log("uploadResult", uploadresult);
+    const uploadResultbyte = await uploadResult.Body.transformToByteArray;
+    console.log("uploadResultbyte", uploadResultbyte);
     return "done";
   } catch (error) {
     console.error("Error downloading PDF from S3:", error);
@@ -27,43 +31,42 @@ async function downloadPdfFromS3(bucketName, fileKey) {
   }
 }
 
+const extractPdfText = async (pdfUrl) => {
+  const apiUrl = process.env.PDF_API_URL;
+  const apyToken = process.env.PDF;
+  try {
+    const options = {
+      method: "POST",
+      headers: {
+        "apy-token": apyToken,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ url: pdfUrl }),
+    };
 
+    const response = await fetch(apiUrl, options);
+    console.log("response1", response.data);
+    const jsonResponse = await response.json();
+    console.log("response", jsonResponse);
 
+    return jsonResponse;
 
-// const apiUrl =process.env.PDF_API_URL ;
-// const apyToken = process.env.PDF;
-
-// const extractPdfText = async (pdfUrl) => {
-//   try {
-//     const options = {
-//       method: 'POST',
-//       headers: {
-//         'apy-token': apyToken,
-//         'Content-Type': 'application/json',
-//       },
-//       body: JSON.stringify({ url: pdfUrl }),
-//     };
-
-
-//     const response = await fetch(apiUrl, options);
-//     console.log('response1', response);
-//     const jsonResponse = await response.json();
-//     console.log('response', jsonResponse);
-
-//     const pdfText = jsonResponse.data;
-//     console.log('pdfText', pdfText);
-//     // const data = {
+    const pdfText = jsonResponse.data;
+    console.log("pdfText", pdfText);
+  } catch (error) {
+    console.error("Error extracting text from PDF:", error);
+  }
+};
+//     // const data = {}
 //     //     url: pdfUrl,
 //     //   };
 //     //   //
-      
+
 //     //     const res = await axios.post(
 //     //       "https://learnit-ai-backend.onrender.com/extract-pdf",
 //     //       data
 //     //     );
 //     //     console.log('res',res);
-
-    
 
 //     return "done";
 //   } catch (error) {
@@ -81,21 +84,20 @@ async function downloadPdfFromS3(bucketName, fileKey) {
 //       throw error;
 //     }
 //   };
-  async function extractTextFromPdfBuffer(pdfBuffer) {
-    const pdfDoc = await PDFDocument.load(pdfBuffer);
-    const text = [];
-  
-    for (const page of pdfDoc.getPages()) {
-      // This method extracts text from the page.
-      // Note: The effectiveness can vary based on the PDF's structure.
-      const pageText = await page.getTextContent();
-      text.push(pageText);
-    }
-    console.log(text);
-  
-    return text.join(' ');
-  }
+async function extractTextFromPdfBuffer(pdfBuffer) {
+  const pdfDoc = await PDFDocument.load(pdfBuffer);
+  const text = [];
 
+  for (const page of pdfDoc.getPages()) {
+    // This method extracts text from the page.
+    // Note: The effectiveness can vary based on the PDF's structure.
+    const pageText = await page.getTextContent();
+    text.push(pageText);
+  }
+  console.log(text);
+
+  return text.join(" ");
+}
 
 const dietJsonData = {
   weeklyMealPlan: [
@@ -183,4 +185,9 @@ async function generateDiet(extractedData) {
   } catch (error) {}
 }
 
-export { downloadPdfFromS3, extractTextFromPdfBuffer, generateDiet };
+export {
+  downloadPdfFromS3,
+  extractTextFromPdfBuffer,
+  generateDiet,
+  extractPdfText,
+};

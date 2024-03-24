@@ -1,10 +1,18 @@
 import { wa, whatsapp1 } from "../config.js";
 import { db } from "../utils/db.js";
-import { extractPdfContent, sendGetRequest, uploadMediaToS3 } from "../utils/imagestorage.js";
+import {
+  extractPdfContent,
+  sendGetRequest,
+  uploadMediaToS3,
+} from "../utils/imagestorage.js";
 import { logFoodEntryAndReportStatus } from "../utils/logmeals.js";
 import { getNurtitionalValue } from "../utils/nutrigpt.js";
 import { getTodayNutritionStatusMessage } from "../utils/nutristats.js";
-import { downloadPdfFromS3, extractTextFromPdfBuffer } from "../utils/report.js";
+import {
+  downloadPdfFromS3,
+  extractTextFromPdfBuffer,
+} from "../utils/report.js";
+import { symptomquery } from "../utils/symptomchecker.js";
 
 import { remove_msg } from "./webhook.js";
 
@@ -56,11 +64,10 @@ const mainflow = async (req, res) => {
         // await wa.messages.text(message, incomingMessage.from.phone);
 
         const message1 = {
-            body: `  Please wait for a moment, we are processing the image...`,
-            preview_url: false,
-          };
-          await wa.messages.text(message1, incomingMessage.from.phone);
-
+          body: `Please hang tight! We're processing your meal image... 🔄📷 In a moment, you'll receive the nutritional values like calories, proteins, carbs, and fats`,
+          preview_url: false,
+        };
+        await wa.messages.text(message1, incomingMessage.from.phone);
 
         const imageUrl = await sendGetRequest(incomingMessage.image.id);
         console.log("imageUrl", imageUrl);
@@ -85,15 +92,10 @@ const mainflow = async (req, res) => {
         console.log("nutitionalvalue", nutitionalvalue.fooditem);
         console.log("url", imageUrl);
 
-     
-
-
-        
-
         return "done";
       }
       if (incomingMessage.document?.mime_type === "application/pdf") {
-        const  imageUrl = await sendGetRequest(incomingMessage.document.id);
+        const imageUrl = await sendGetRequest(incomingMessage.document.id);
         const message1 = {
           body: ` Thank you for sending the document, we will process and give personalized recommendations based on the report and daily tips to improve your health.`,
           preview_url: false,
@@ -101,8 +103,8 @@ const mainflow = async (req, res) => {
         await wa.messages.text(message1, incomingMessage.from.phone);
         // const pdfBuffer = await downloadPdfFromS3(process.env.PUBLIC_S3_BUCKET_NAME,key);
         // console.log("pdfBuffer", pdfBuffer);
-//          const response = await extractPdfContent(`./downloads/${key}`)
-// console.log("response",response);
+        //          const response = await extractPdfContent(`./downloads/${key}`)
+        // console.log("response",response);
         // const bloodreportdata = await extractPdfText(url);
         //  const data = await extractDataFromPdf(pdfBuffer);
         // const response = extractTextFromPdfData(pdfBuffer);
@@ -126,7 +128,7 @@ const mainflow = async (req, res) => {
           },
         });
         const message = {
-          body: `Daily calorie goal set to ${calorieGoal}`,
+          body: `Daily Calorie Goal Set to ${calorieGoal} 🎯✅`,
           preview_url: false,
         };
         await wa.messages.text(message, incomingMessage.from.phone);
@@ -183,20 +185,20 @@ const mainflow = async (req, res) => {
         );
         return "done";
       }
-      if (
-        typeOfMsg === "radio_button_message" &&
-        incomingMessage.interactive.type === "list_reply" &&
-        incomingMessage.interactive.list_reply.id.includes("Blood_report")
-      ) {
-        const message = {
-          body: `Please send the document of the blood report`,
-          preview_url: false,
-        };
+      //   if (
+      //     typeOfMsg === "radio_button_message" &&
+      //     incomingMessage.interactive.type === "list_reply" &&
+      //     incomingMessage.interactive.list_reply.id.includes("Blood_report")
+      //   ) {
+      //     const message = {
+      //       body: `Please send the document of the blood report`,
+      //       preview_url: false,
+      //     };
 
-        await wa.messages.text(message, recipientPhone);
+      //     await wa.messages.text(message, recipientPhone);
 
-        return "done";
-      }
+      //     return "done";
+      //   }
       //nutrition status
       if (
         typeOfMsg === "radio_button_message" &&
@@ -223,7 +225,7 @@ const mainflow = async (req, res) => {
         incomingMessage.interactive.list_reply.id.includes("calorietracking")
       ) {
         const message = {
-          body: `Please send the image of the meal`,
+          body: "Please Send an Image of Your Meal 🍽️📸",
           preview_url: false,
         };
 
@@ -231,54 +233,161 @@ const mainflow = async (req, res) => {
 
         return "done";
       }
-    //   if (incomingMessage.text && incomingMessage.text.hasOwnProperty("body") && incomingMessage.text.body === "Hi") {
-        
-    //     return "done";
-    //   }
+      if (
+        typeOfMsg === "radio_button_message" &&
+        incomingMessage.interactive.type === "list_reply" &&
+        incomingMessage.interactive.list_reply.id.includes("symptomchecker")
+      ) {
+        await db.user.update({
+          where: {
+            phone: recipientPhone,
+          },
+          data: {
+            currentservice: "symptomchecker",
+          },
+        });
+        const message = {
+          body: "Please Describe Your Symptoms in Detail 📝💬, Mentioning All the Difficulties You're Experiencing.",
+          preview_url: false,
+        };
+        await wa.messages.text(message, recipientPhone);
+        return "done";
+      }
+      if (
+        incomingMessage.text &&
+        incomingMessage.text.hasOwnProperty("body") &&
+        incomingMessage.text.body !== "Hi" &&
+        user.currentservice === "symptomchecker"
+      ) {
+        const response = await symptomquery(incomingMessage.text.body);
+        console.log("response", response);
 
-      if (incomingMessage.text && incomingMessage.text.hasOwnProperty("body") && incomingMessage.text.body === "Hi") {
-        const list_message = {
+        const message1 = {
+          body: response,
+          preview_url: false,
+        };
+        await wa.messages.text(message1, recipientPhone);
+
+        await db.user.update({
+          where: {
+            phone: recipientPhone,
+          },
+          data: {
+            currentservice: "greet",
+          },
+        });
+
+        const message = {
+          body: `Type Exit to return to main menu`,
+          preview_url: false,
+        };
+        await wa.messages.text(message, recipientPhone);
+
+        return "done";
+      }
+
+      if (
+        (incomingMessage.text &&
+          incomingMessage.text.hasOwnProperty("body") &&
+          incomingMessage.text.body === "Hi") ||
+        incomingMessage.text.body === "Exit"
+      ) {
+        console.log("inside hi");
+        await db.user.update({
+          where: {
+            phone: recipientPhone,
+          },
+          data: {
+            currentservice: "greet",
+          },
+        });
+        const list_message1 = {
           type: "list",
 
           body: {
-            text: "Select your service",
+            text: "Choose Your Health Action ",
           },
 
           action: {
-            button: "Select a service",
+            button: "Pick Your Health Features ",
             sections: [
               {
                 title: "SECTION_1_TITLE",
                 rows: [
                   {
                     id: "calorietracking",
-                    title: "Update calorie intake",
-                    description: "Input your calorie intake",
-                  },
-                  {
-                    id: "Blood_report",
-                    title: "Upload Blood Report",
-                    description: "Upload Your Blood Report",
+                    title: "Update Calorie Intake ",
+
+                    description: "Input Your Calorie Intake ",
                   },
                   {
                     id: "set_calorie_goal",
-                    title: "Set Calorie Goal",
-                    description: "Set your daily calorie goal",
+                    title: "Set Your Calorie Goal ",
+                    description: "Set Your Daily Calorie Goal ",
+                  },
+                  {
+                    id: "symptomchecker",
+                    title: "Symptom Checker ",
+                    description: "Check Your Symptoms ",
                   },
 
                   {
                     id: "view_nutition_status",
-                    title: "View Nutrition Status",
-                    description: "View your nutrition status for today",
+                    title: "View Nutrition Status ",
+                    description: "Today's Nutrition Status ",
                   },
                 ],
               },
             ],
           },
         };
+        const list_message = {
+            type: "list",
+  
 
-        await wa.messages.interactive(list_message, incomingMessage.from.phone);
+        body: {
+            text: "Choose Your Health Action 🌈👩‍⚕️",
+          },
 
+          action: {
+            button: "Pick Health Features",
+            sections: [
+              {
+                title: "SECTION_1_TITLE",
+                rows: [
+                  {
+                    id: "calorietracking",
+                    title: "Update Calorie Intake 🍽️✨",
+                    description: "Input Your Calorie Intake 📝🔢",
+                  },
+                  {
+                    id: "symptomchecker",
+                    title: "Symptom Checker🩺🔍 ",
+                    description: "Check Your Symptoms🤒🔎 ",
+                  },
+                  
+                  {
+                    id: "set_calorie_goal",
+                    title: "Set Your Calorie Goal 🎯🍏",
+                    description: "Set Your Daily Calorie Goal 📅🎯",
+                  },
+
+                  {
+                    id: "view_nutition_status",
+                    title: "View Nutrition Status🍎💪",
+                    description: "Today's Nutrition Status 🌟📊",
+                  },
+                ],
+              },
+            ],
+          },
+        };
+        console.log("before interactive");
+        await wa.messages.interactive(
+          list_message,
+          incomingMessage.from.phone
+        );
+        console.log("after interactive");
         return "done";
       }
 
