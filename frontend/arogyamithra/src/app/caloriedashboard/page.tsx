@@ -53,8 +53,7 @@ useEffect(()=>{
       .from('FoodEntry')
       .select('*')
       .eq('userId', userreal)
-      .gte('entryDate', todayStart.toISOString())
-      .lte('entryDate', todayEnd.toISOString());
+      
 
     if (error) throw error;
 
@@ -78,7 +77,7 @@ setTotalCalories(totalCaloriesv)
 setTotalFats(totalFatsv)
 setTotalCarbohydrates(totalCarbohydratesv)
 setTotalProteins(totalProteinv)
-
+console.log(totalCaloriesv)
 
       // const { data, error } = await supabase
       // .from('FoodEntry')
