@@ -76,24 +76,24 @@ Arogya Mithra is a comprehensive tool for managing your daily nutrition, calorie
 
 2. ### Configure Firebase Authentication
 
-1. Set up Firebase Authentication for phone number sign-in.
-2. Create a `.env` file in the root directory and add your Firebase configuration.
+   + Set up Firebase Authentication for phone number sign-in.
+   + Create a `.env` file in the root directory and add your Firebase configuration.
 
 3. ### Configure Supabase
 
-1. Set up a Supabase project and create the required tables (`User`, `DailyGoal`, `FoodEntry`).
-2. Update the `.env` file with your Supabase credentials.
+   + Set up a Supabase project and create the required tables (`User`, `DailyGoal`, `FoodEntry`).
+   + Update the `.env` file with your Supabase credentials.
 
 4. ### Configure WhatsApp API
 
-1. Obtain access to the WhatsApp API for chatbot integration.
-2. Update the `.env` file with WhatsApp API credentials.
+   + Obtain access to the WhatsApp API for chatbot integration.
+   + Update the `.env` file with WhatsApp API credentials.
 
 5. ### Run Migrations
 
-```bash
-npm run migrate
-```
+   ```bash
+      npm run migrate
+   ```
 
 ### Video Walkthrough
 
