@@ -18,9 +18,6 @@ Arogya Mithra is a comprehensive tool for managing your daily nutrition, calorie
 1. [Features](#features)
 2. [Setup Instructions](#setup-instructions)
 3. [Usage](#usage)
-4. [API Documentation](#api-documentation)
-5. [Contributing](#contributing)
-6. [License](#license)
 
 ## Features
 
